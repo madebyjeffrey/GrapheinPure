@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		767D1BCC1486BE65008CCDA4 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 767D1BCB1486BE65008CCDA4 /* main.cpp */; };
+		767D1BCC1486BE65008CCDA4 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 767D1BCB1486BE65008CCDA4 /* main.mm */; };
 		767D1BCE1486BE65008CCDA4 /* GrapheinPure.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 767D1BCD1486BE65008CCDA4 /* GrapheinPure.1 */; };
+		767D1BD51486BE8B008CCDA4 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 767D1BD41486BE8B008CCDA4 /* OpenGL.framework */; };
+		767D1BD71486DD28008CCDA4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 767D1BD61486DD28008CCDA4 /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,8 +28,10 @@
 
 /* Begin PBXFileReference section */
 		767D1BC71486BE65008CCDA4 /* GrapheinPure */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GrapheinPure; sourceTree = BUILT_PRODUCTS_DIR; };
-		767D1BCB1486BE65008CCDA4 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		767D1BCB1486BE65008CCDA4 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		767D1BCD1486BE65008CCDA4 /* GrapheinPure.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = GrapheinPure.1; sourceTree = "<group>"; };
+		767D1BD41486BE8B008CCDA4 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		767D1BD61486DD28008CCDA4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +39,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				767D1BD71486DD28008CCDA4 /* Cocoa.framework in Frameworks */,
+				767D1BD51486BE8B008CCDA4 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +50,8 @@
 		767D1BBC1486BE64008CCDA4 = {
 			isa = PBXGroup;
 			children = (
+				767D1BD61486DD28008CCDA4 /* Cocoa.framework */,
+				767D1BD41486BE8B008CCDA4 /* OpenGL.framework */,
 				767D1BCA1486BE65008CCDA4 /* GrapheinPure */,
 				767D1BC81486BE65008CCDA4 /* Products */,
 			);
@@ -60,7 +68,7 @@
 		767D1BCA1486BE65008CCDA4 /* GrapheinPure */ = {
 			isa = PBXGroup;
 			children = (
-				767D1BCB1486BE65008CCDA4 /* main.cpp */,
+				767D1BCB1486BE65008CCDA4 /* main.mm */,
 				767D1BCD1486BE65008CCDA4 /* GrapheinPure.1 */,
 			);
 			path = GrapheinPure;
@@ -116,7 +124,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				767D1BCC1486BE65008CCDA4 /* main.cpp in Sources */,
+				767D1BCC1486BE65008CCDA4 /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,6 +181,7 @@
 		767D1BD21486BE65008CCDA4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -180,6 +189,7 @@
 		767D1BD31486BE65008CCDA4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
