@@ -16,6 +16,7 @@
 		76A7320A148735DB004FB2EB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76A73208148735DB004FB2EB /* Shader.cpp */; };
 		76A732EF14873D0D004FB2EB /* basic.fsh in CopyFiles */ = {isa = PBXBuildFile; fileRef = 76A732EA14873CA8004FB2EB /* basic.fsh */; };
 		76A732F014873D0F004FB2EB /* basic.vsh in CopyFiles */ = {isa = PBXBuildFile; fileRef = 76A732EB14873CA8004FB2EB /* basic.vsh */; };
+		76A732F714880609004FB2EB /* Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76A732F614880609004FB2EB /* Buffer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -272,6 +273,8 @@
 		76A732E8148735E7004FB2EB /* xstream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = xstream.hpp; sourceTree = "<group>"; };
 		76A732EA14873CA8004FB2EB /* basic.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = basic.fsh; sourceTree = "<group>"; };
 		76A732EB14873CA8004FB2EB /* basic.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = basic.vsh; sourceTree = "<group>"; };
+		76A732F5148805FC004FB2EB /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
+		76A732F614880609004FB2EB /* Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Buffer.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -319,6 +322,8 @@
 				767D1BCD1486BE65008CCDA4 /* GrapheinPure.1 */,
 				76A73205148703A4004FB2EB /* Context.cpp */,
 				76A732071487040E004FB2EB /* Context.h */,
+				76A732F5148805FC004FB2EB /* Buffer.h */,
+				76A732F614880609004FB2EB /* Buffer.cpp */,
 			);
 			path = GrapheinPure;
 			sourceTree = "<group>";
@@ -633,6 +638,7 @@
 				76A73204148700D6004FB2EB /* main.cpp in Sources */,
 				76A73206148703A4004FB2EB /* Context.cpp in Sources */,
 				76A7320A148735DB004FB2EB /* Shader.cpp in Sources */,
+				76A732F714880609004FB2EB /* Buffer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

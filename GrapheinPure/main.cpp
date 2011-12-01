@@ -25,6 +25,8 @@
 
 #include "Context.h"
 #include "Shader.h"
+#include "Buffer.h"
+
 /*
     Notes:
         Original code used NSOpenGLContext 
@@ -89,81 +91,49 @@ int main (int argc, char * const argv[])
         REPORT_ERROR_AND_EXIT("Problem with OpenGL framebuffer after specifying depth render buffer.");
 
     
-    Shader s;
-    s.compile("basic.fsh", GL_FRAGMENT_SHADER);
-    s.compile("basic.vsh", GL_VERTEX_SHADER);
-    s.link();
-    s.use();
-    //    glOrtho(-img_width / 2, img_width / 2, -img_height / 2, img_height / 2, -1, 1);
-    auto projection = glm::ortho(-img_width/2.0f, img_width / 2.0f, -img_height / 2.0f, img_height / 2.0f, -1.0f, 1.0f);
-//    auto modelview = glm::mat4(1.0f);
-    
-    int projectionMatrix = s.uniformLocation("ProjectionMatrix");
-    REPORTGLERROR("Get Uniform location for p matrix");
-//    int modelViewMatrix = s.uniformLocation("ModelViewMatrix");
-    REPORTGLERROR("Get Uniform location for mv matrix");
-    
-    glUniformMatrix4fv(projectionMatrix, 1, GL_FALSE, glm::value_ptr(projection));
-    REPORTGLERROR("give it projection matrix");
-//    glUniformMatrix4fv(modelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview));
-//    REPORTGLERROR("give it model view matrix");
-    
-
+    context.addShader("basic", "basic.vsh", "basic.fsh");
+    context.ortho(-img_width/2.0f, img_width / 2.0f, -img_height / 2.0f, img_height / 2.0f, -1.0f, 1.0f);
+    context.useShader("basic");
     
     GLuint arraybuffer[1]; 
     glGenBuffers(1, arraybuffer);
     
 // std::vector<double> triangle ;
     
+    glm::vec4 stuff[] = { glm::vec4(0.0f, 60.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
+         glm::vec4(40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),
+         glm::vec4(-40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) };
+    
+    VertexBuffer vertices;
+    vertices.buffer(6, stuff);
+    
+    /*
     struct vertex {
         glm::vec4 position;
         glm::vec4 colour;
-/*    } triangle[] = { { glm::vec4(0.0f, .600f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
-        { glm::vec4(.400f, -.400f, 0.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) },
-        { glm::vec4(-.400f, -.400f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) }};  */
-    /*
-    glm::vec4 position[] = { glm::vec4(0.0f, .600f, 0.0f, 1.0f), 
-        glm::vec4(.400f, -.400f, 0.0f, 1.0f), 
-        glm::vec4(-.400f, -.400f, 0.0f, 1.0f) };
-*/
-} triangle[] = { { glm::vec4(0.0f, 60.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
- { glm::vec4(40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) },
- { glm::vec4(-40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) }};
+    } triangle[] = { { glm::vec4(0.0f, 60.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
+                     { glm::vec4(40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) },
+                     { glm::vec4(-40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) }};
 
+    
   //  cout << "Size of triangle: " << sizeof(position) << endl;
     glBindBuffer(GL_ARRAY_BUFFER, arraybuffer[0]);
     REPORTGLERROR("bound array buffer");
     glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), (GLvoid*)triangle, GL_STATIC_DRAW);
 //    glBufferData(GL_ARRAY_BUFFER, sizeof(position), (GLvoid*)position, GL_STATIC_DRAW);
     REPORTGLERROR("Buffer array data");
-    
+    */
     /*
      * Render a simple shape to the FBO
      */
     
-    glEnable(GL_DEPTH_TEST);
-    REPORTGLERROR("enabling depth testing");
+    context.depthTest(true);
+    context.clearColour(glm::vec4(0.0, 0.0, 0.0, 1.0));
+    context.viewport(0, 0, img_width, img_height);
+    context.clearColourBuffer();
+    context.clearDepthBuffer();
     
-    glClearColor(0.0, 0.0, 0.0, 1.0);
-    REPORTGLERROR("specifying clear color");
-    
-    glViewport(0, 0, img_width, img_height);
-    REPORTGLERROR("specifying viewport");
-    
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-//    glOrtho(-img_width / 2, img_width / 2, -img_height / 2, img_height / 2, -1, 1);
-    
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
-    REPORTGLERROR("setting up view/model matrices");
-    
-    glClear(GL_COLOR_BUFFER_BIT);
-    REPORTGLERROR("clearing color buffer");
-    
-    glClear(GL_DEPTH_BUFFER_BIT);
-    REPORTGLERROR("clearing depth buffer");
-    
+    /*
     GLuint vao;
     glGenVertexArrays(1, &vao);
     REPORTGLERROR("gen vao");
@@ -176,32 +146,26 @@ int main (int argc, char * const argv[])
     glEnableVertexAttribArray(1);
     REPORTGLERROR("enable array 1");
     
-//    cout << "Offsets: " << offsetof(vertex, position) << "  and " << offsetof(vertex, colour) << endl;
+    */
+    vertices.enableLocation(0, 0, 1);
+    vertices.enableLocation(1, 1, 1);
+    vertices.drawTriangles(0, 3);
 
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (GLvoid*)offsetof(vertex, position));  
+//    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (GLvoid*)offsetof(vertex, position));  
 //    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);  
-    REPORTGLERROR("tell it vertex data");
+//    REPORTGLERROR("tell it vertex data");
     
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (GLvoid*)offsetof(vertex, colour));
-    REPORTGLERROR("tell it colour data");
+  //  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (GLvoid*)offsetof(vertex, colour));
+//    REPORTGLERROR("tell it colour data");
     
-    s.validate();
-    REPORTGLERROR("Validate program");
+//    s.validate();
+//    REPORTGLERROR("Validate program");
     
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    REPORTGLERROR("rendering scene");
+  //  glDrawArrays(GL_TRIANGLES, 0, 3);
+//    REPORTGLERROR("rendering scene");
     
     glFinish();
     REPORTGLERROR("glFinish()");
-    /*
-    glBegin(GL_TRIANGLES);
-    glColor3f(1.0, 0.0, 0.0);
-    glVertex3f(0.0, 60.0, 0.0);
-    glColor3f(0.0, 1.0, 0.0);
-    glVertex3f(40.0, -40.0, 0.0);
-    glColor3f(0.0, 0.0, 1.0);
-    glVertex3f(-40.0, -40.0, 0.0);
-    glEnd(); */
 
     
     /*

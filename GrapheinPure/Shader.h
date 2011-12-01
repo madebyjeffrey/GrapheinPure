@@ -24,7 +24,7 @@
 
 #include <boost/foreach.hpp>
 
-#include "Context.h"
+
 
 
 using namespace std;
@@ -45,7 +45,10 @@ public:
     void unuse();
     
     int uniformLocation(const char *name);
+    int uniformLocation(const string &name);
     int attributeLocation(const char *name);
+    
+    bool setUniform(const std::string &uniformName, const glm::mat4 &matrix);
     
     static glm::mat4 viewportTranslation;
     static glm::mat4 projectionMatrix;

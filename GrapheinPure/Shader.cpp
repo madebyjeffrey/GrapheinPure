@@ -1,4 +1,7 @@
 #include "Shader.h"
+
+#include "Context.h"
+
 using namespace std;
 
 glm::mat4 Shader::viewportTranslation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0));
@@ -165,8 +168,34 @@ int Shader::uniformLocation(const char *name)
     return glGetUniformLocation(this->program, name);
 }
 
+int Shader::uniformLocation(const string &name)
+{
+    return uniformLocation(name.c_str());
+}
+
 int Shader::attributeLocation(const char *name)
 {
     return glGetAttribLocation(this->program, name);
 }
 
+
+bool Shader::setUniform(const std::string &uniformName, const glm::mat4 &matrix)
+{
+    int uniform = uniformLocation(uniformName);
+    REPORTGLERROR("Check uniform location");
+    if (uniform == -1) return false;
+    
+    GLenum type;
+    
+    glGetActiveUniform(program, uniform, 0, NULL, NULL, &type, NULL);
+    REPORTGLERROR("Get uniform type info");
+    
+    if (type == GL_FLOAT_MAT4)
+    {
+        glUniformMatrix4fv(uniform, 1, GL_FALSE, glm::value_ptr(matrix));
+        REPORTGLERROR("Give uniform data");
+        return true;
+    }
+    
+    return false;
+}

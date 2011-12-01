@@ -76,3 +76,76 @@ void GLContext::renderInfo()
 	std::cout << "Shading Language Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl << std::endl;
     REPORTGLERROR("Get shading language version");
 }
+
+void GLContext::addShader(std::string name, std::string vertexFile, std::string fragmentFile)
+{
+    Shader s;
+    s.compile(fragmentFile, GL_FRAGMENT_SHADER);
+    s.compile(vertexFile, GL_VERTEX_SHADER);
+    s.link();
+    s.use();
+    
+    shaders[name] = s;
+}
+
+bool GLContext::setUniform(const std::string name, const std::string uniformName, const glm::mat4 &matrix)
+{
+    return shaders[name].setUniform(uniformName, matrix);
+}
+
+void GLContext::useShader(std::string name)
+{
+    shaders[name].use();
+    
+    setUniform(name, "ProjectionMatrix", projection);
+}
+
+void GLContext::ortho(float left, float right, float bottom, float top, float zNear, float zFar)
+{
+    projection = glm::ortho(left, right, bottom, top, zNear, zFar);
+}
+
+void GLContext::clearColour(const glm::vec4 &c)
+{
+    glClearColor(c[0], c[1], c[2], c[3]);
+    REPORTGLERROR("specifying clear color");
+}
+
+bool GLContext::depthTest(bool enable)
+{
+    GLboolean v = glIsEnabled(GL_DEPTH_TEST);
+    REPORTGLERROR("is depth testing enabled");
+    if (enable)
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
+    
+    REPORTGLERROR("enabling/disabling depth testing");
+    
+    return v == GL_TRUE;
+}
+
+bool GLContext::depthTest()
+{
+    GLboolean v = glIsEnabled(GL_DEPTH_TEST);
+    REPORTGLERROR("is depth testing enabled");
+    return v == GL_TRUE;    
+}
+
+void GLContext::viewport(int left, int top, int width, int height)
+{
+    glViewport(left, top, width, height);
+    REPORTGLERROR("specifying viewport");
+}
+
+void GLContext::clearColourBuffer()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    REPORTGLERROR("clearing color buffer");
+}
+
+void GLContext::clearDepthBuffer()
+{
+    glClear(GL_DEPTH_BUFFER_BIT);
+    REPORTGLERROR("clearing depth buffer");
+}
