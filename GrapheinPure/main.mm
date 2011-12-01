@@ -62,7 +62,8 @@ int main (int argc, const char * argv[])
 #include <iostream>         // for error output
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/glu.h>      // for gluCheckExtension
-#import <AppKit/AppKit.h>   // for NSOpenGL...
+#include <ApplicationServices/ApplicationServices.h> //CGColorSpace.h
+//#import <AppKit/AppKit.h>   // for NSOpenGL...
 
 // Simple error reporting macros to help keep the sample code clean
 #define REPORTGLERROR(task) { GLenum tGLErr = glGetError(); if (tGLErr != GL_NO_ERROR) { std::cout << "OpenGL error " << tGLErr << " while " << task << "\n"; } }
@@ -71,12 +72,39 @@ int main (int argc, const char * argv[])
 
 int main (int argc, char * const argv[])
 {
-	NSAutoreleasePool*			pool = [NSAutoreleasePool new];
+//	NSAutoreleasePool*			pool = [NSAutoreleasePool new];
     
     /*
      * Create an OpenGL context just so that OpenGL calls will work. I'm not using it for actual rendering.
      */
     
+    
+    CGLError err;
+    
+    CGLPixelFormatAttribute format[] = {
+        kCGLPFAPBuffer, // obsolete
+        kCGLPFANoRecovery, 
+        kCGLPFAAccelerated,
+        kCGLPFADepthSize, (CGLPixelFormatAttribute)24,
+        (CGLPixelFormatAttribute)0
+    };
+    
+    CGLPixelFormatObj pix;
+    GLint p = 0;
+
+    err = CGLChoosePixelFormat(format, &pix, &p);
+
+    if (err)
+    {
+        std::cout << CGLErrorString(err) << std::endl;
+        return 1;
+    }
+    
+    CGLPBufferObj pixBuf;
+    
+    err = CGLCreatePBuffer(32, 32, GL_TEXTURE_RECTANGLE_EXT, GL_RGBA , 0, &pixBuf);
+
+    /*
 	NSOpenGLPixelBuffer*		pixBuf;
 	NSOpenGLContext*			openGLContext;
 	NSOpenGLPixelFormatAttribute	attributes[] = {
@@ -89,15 +117,41 @@ int main (int argc, char * const argv[])
 	NSOpenGLPixelFormat*		pixFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
 	
     // Create an OpenGL pixel buffer
-    pixBuf = [[NSOpenGLPixelBuffer alloc] initWithTextureTarget:GL_TEXTURE_RECTANGLE_EXT textureInternalFormat:GL_RGBA textureMaxMipMapLevel:0 pixelsWide:32 pixelsHigh:32];
+    pixBuf = [[NSOpenGLPixelBuffer alloc] initWithTextureTarget:GL_TEXTURE_RECTANGLE_EXT textureInternalFormat:GL_RGBA textureMaxMipMapLevel:0 pixelsWide:32 pixelsHigh:32]; */
     NULL_ERROR_EXIT(pixBuf, "Unable to create NSOpenGLPixelBuffer");
     
+    CGLContextObj openGLContext;
+    
+    err = CGLCreateContext(pix, NULL, &openGLContext);
+    if (err)
+    {
+        std::cout << CGLErrorString(err) << std::endl;
+        return 1;
+    }
+    
     // Create the OpenGL context to render with (with color and depth buffers)
-    openGLContext = [[NSOpenGLContext alloc] initWithFormat:pixFormat shareContext:nil];
+    //openGLContext = [[NSOpenGLContext alloc] initWithFormat:pixFormat shareContext:nil];
     NULL_ERROR_EXIT(openGLContext, "Unable to create NSOpenGLContext");
     
-    [openGLContext setPixelBuffer:pixBuf cubeMapFace:0 mipMapLevel:0 currentVirtualScreen:[openGLContext currentVirtualScreen]];
-    [openGLContext makeCurrentContext];
+    GLint screen;
+    
+    err = CGLGetVirtualScreen(openGLContext, &screen);
+    if (err)
+    {
+        std::cout << CGLErrorString(err) << std::endl;
+        return 1;
+    }
+    
+    
+    err = CGLSetPBuffer(openGLContext, pixBuf, 0, 0, screen);
+    if (err)
+    {
+        std::cout << CGLErrorString(err) << std::endl;
+        return 1;
+    }
+/*    [openGLContext setPixelBuffer:pixBuf cubeMapFace:0 mipMapLevel:0 currentVirtualScreen:[openGLContext currentVirtualScreen]]; */
+    CGLSetCurrentContext(openGLContext);
+//    [openGLContext makeCurrentContext];
     
     /*
      * Test if framebuffer objects are supported
@@ -259,11 +313,28 @@ int main (int argc, char * const argv[])
     CGColorSpaceRelease( colorSpace );
     CGImageRelease(imageRef);
     
-    [openGLContext clearDrawable];
-    [openGLContext release];
-    [pixBuf release];
+//    [openGLContext clearDrawable];
+    err = CGLClearDrawable(openGLContext);
+    if (err)
+    {
+        std::cout << CGLErrorString(err) << std::endl;
+        return 1;
+    }
+
     
-	[pool release];
+//    [openGLContext release];
+    err = CGLDestroyContext(openGLContext);
+    if (err)
+    {
+        std::cout << CGLErrorString(err) << std::endl;
+        return 1;
+    }
+
+    
+    //[pixBuf release];
+    err = CGLDestroyPBuffer(pixBuf);
+    
+//	[pool release];
     
     return 0;
 }
