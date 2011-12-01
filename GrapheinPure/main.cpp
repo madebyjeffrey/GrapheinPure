@@ -95,16 +95,16 @@ int main (int argc, char * const argv[])
     s.link();
     s.use();
     //    glOrtho(-img_width / 2, img_width / 2, -img_height / 2, img_height / 2, -1, 1);
-//    auto projection = glm::ortho(-img_width/2.0f, img_width / 2.0f, -img_height / 2.0f, img_height / 2.0f, -1.0f, 1.0f);
+    auto projection = glm::ortho(-img_width/2.0f, img_width / 2.0f, -img_height / 2.0f, img_height / 2.0f, -1.0f, 1.0f);
 //    auto modelview = glm::mat4(1.0f);
     
-//    int projectionMatrix = s.uniformLocation("ProjectionMatrix");
+    int projectionMatrix = s.uniformLocation("ProjectionMatrix");
     REPORTGLERROR("Get Uniform location for p matrix");
 //    int modelViewMatrix = s.uniformLocation("ModelViewMatrix");
     REPORTGLERROR("Get Uniform location for mv matrix");
     
-//    glUniformMatrix4fv(projectionMatrix, 1, GL_FALSE, glm::value_ptr(projection));
-//    REPORTGLERROR("give it projection matrix");
+    glUniformMatrix4fv(projectionMatrix, 1, GL_FALSE, glm::value_ptr(projection));
+    REPORTGLERROR("give it projection matrix");
 //    glUniformMatrix4fv(modelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview));
 //    REPORTGLERROR("give it model view matrix");
     
@@ -118,17 +118,17 @@ int main (int argc, char * const argv[])
     struct vertex {
         glm::vec4 position;
         glm::vec4 colour;
-    } triangle[] = { { glm::vec4(0.0f, .600f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) },
-        { glm::vec4(.400f, -.400f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) },
-        { glm::vec4(-.400f, -.400f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) }}; 
+/*    } triangle[] = { { glm::vec4(0.0f, .600f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
+        { glm::vec4(.400f, -.400f, 0.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) },
+        { glm::vec4(-.400f, -.400f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) }};  */
     /*
     glm::vec4 position[] = { glm::vec4(0.0f, .600f, 0.0f, 1.0f), 
         glm::vec4(.400f, -.400f, 0.0f, 1.0f), 
         glm::vec4(-.400f, -.400f, 0.0f, 1.0f) };
 */
-// } triangle[] = { { glm::vec4(0.0f, 60.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
-// { glm::vec4(40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
-// { glm::vec4(-40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) }};
+} triangle[] = { { glm::vec4(0.0f, 60.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
+ { glm::vec4(40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) },
+ { glm::vec4(-40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) }};
 
   //  cout << "Size of triangle: " << sizeof(position) << endl;
     glBindBuffer(GL_ARRAY_BUFFER, arraybuffer[0]);

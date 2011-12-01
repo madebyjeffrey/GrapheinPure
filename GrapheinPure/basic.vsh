@@ -15,7 +15,7 @@ layout(location = 1) in vec4 Vcolour;
 
 //uniform mat4    ModelViewMatrix; 
 
-//uniform mat4    ProjectionMatrix;
+uniform mat4    ProjectionMatrix;
 out vec4 colour;
     
 void main()
@@ -30,8 +30,8 @@ void main()
     //vec4(vec2(1.0/450.0) * position.xy, 0, 1);
     
     colour = Vcolour;
-//    gl_Position = ProjectionMatrix * Vposition; // ModelViewMatrix * Vertex;
-    gl_Position = Vposition;
+    gl_Position = ProjectionMatrix * Vposition; // ModelViewMatrix * Vertex;
+//    gl_Position = Vposition;
     
 }
 
