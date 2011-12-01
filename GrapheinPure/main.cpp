@@ -6,161 +6,49 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-//#include <iostream>
-//#include <OpenGL/gl3.h>
-//#include <OpenGL/OpenGL.h>
-
-//using namespace std;
-/*
-int main (int argc, const char * argv[])
-{
-
-    // insert code here...
-//    std::cout << "Hello, World!\n";
-    CGLError err;
-    
-    CGLPixelFormatAttribute format[] = {
-        kCGLPFAAllowOfflineRenderers,
-        kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_3_2_Core,
-        kCGLPFAAccelerated,
-        (CGLPixelFormatAttribute)0
-    };
-    
-    CGLPixelFormatObj pix;
-    GLint p = 0;
-    
-    err = CGLChoosePixelFormat(format, &pix, &p);
-    
-    if (err)
-    {
-        cout << CGLErrorString(err) << endl;
-        return 1;
-    }
-    
-    cout << "Screens: " << p << endl;
-    cout << "Pixel Format null? " << (pix == NULL ? "yes" : "no") << endl;
-    
-    CGLContextObj context;
-    
-    err = CGLCreateContext(pix, NULL, &context);
-    
-    if (err)
-    {
-        cout << CGLErrorString(err) << endl;
-        return 1;
-    }
-
-    cout << "Context null? " << (pix == NULL ? "yes" : "no") << endl;
-    
-    
-    
-    return 0;
-}*/
-
 #define kOutputFile "/Users/drakej/Desktop/test_image.jpg"
 
 #include <iostream>         // for error output
-#import <OpenGL/OpenGL.h>
-#import <OpenGL/glu.h>      // for gluCheckExtension
+#include <vector>
+
+#include <OpenGL/OpenGL.h>
+
+#include <OpenGL/gl3.h>
+
+//#include <OpenGL/glu.h>
+//#include <OpenGL/glext.h>      
 #include <ApplicationServices/ApplicationServices.h> //CGColorSpace.h
-//#import <AppKit/AppKit.h>   // for NSOpenGL...
 
-// Simple error reporting macros to help keep the sample code clean
-#define REPORTGLERROR(task) { GLenum tGLErr = glGetError(); if (tGLErr != GL_NO_ERROR) { std::cout << "OpenGL error " << tGLErr << " while " << task << "\n"; } }
-#define REPORT_ERROR_AND_EXIT(desc) { std::cout << desc << "\n"; return 1; }
-#define NULL_ERROR_EXIT(test, desc) { if (!test) REPORT_ERROR_AND_EXIT(desc); }
+#include "../glm/glm.hpp"
+#include "../glm/gtc/matrix_transform.hpp"
+#include "../glm/gtc/type_ptr.hpp"
 
+#include "Context.h"
+#include "Shader.h"
+/*
+    Notes:
+        Original code used NSOpenGLContext 
+            -> converted to CGL
+        Original code checks for the frame buffer object 
+            -> the idea is to convert this code to OpenGL 3.2, so we don't test for it anymore
+            -> side effect, we don't need glu* (or not) anymore, and now get rid of EXT on functions
+ */
 int main (int argc, char * const argv[])
 {
-//	NSAutoreleasePool*			pool = [NSAutoreleasePool new];
-    
     /*
      * Create an OpenGL context just so that OpenGL calls will work. I'm not using it for actual rendering.
      */
+    GLContext context;
+    context.makeCurrent();
+    context.renderInfo();
     
-    
-    CGLError err;
-    
-    CGLPixelFormatAttribute format[] = {
-        kCGLPFAPBuffer, // obsolete
-        kCGLPFANoRecovery, 
-        kCGLPFAAccelerated,
-        kCGLPFADepthSize, (CGLPixelFormatAttribute)24,
-        (CGLPixelFormatAttribute)0
-    };
-    
-    CGLPixelFormatObj pix;
-    GLint p = 0;
-
-    err = CGLChoosePixelFormat(format, &pix, &p);
-
-    if (err)
+    if (argc == 1) 
     {
-        std::cout << CGLErrorString(err) << std::endl;
+        std::cout << "No shader path found." << std::endl;
         return 1;
     }
     
-    CGLPBufferObj pixBuf;
-    
-    err = CGLCreatePBuffer(32, 32, GL_TEXTURE_RECTANGLE_EXT, GL_RGBA , 0, &pixBuf);
-
-    /*
-	NSOpenGLPixelBuffer*		pixBuf;
-	NSOpenGLContext*			openGLContext;
-	NSOpenGLPixelFormatAttribute	attributes[] = {
-        NSOpenGLPFAPixelBuffer,
-        NSOpenGLPFANoRecovery,
-        NSOpenGLPFAAccelerated,
-        NSOpenGLPFADepthSize, 24,
-        (NSOpenGLPixelFormatAttribute) 0
-    };
-	NSOpenGLPixelFormat*		pixFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
-	
-    // Create an OpenGL pixel buffer
-    pixBuf = [[NSOpenGLPixelBuffer alloc] initWithTextureTarget:GL_TEXTURE_RECTANGLE_EXT textureInternalFormat:GL_RGBA textureMaxMipMapLevel:0 pixelsWide:32 pixelsHigh:32]; */
-    NULL_ERROR_EXIT(pixBuf, "Unable to create NSOpenGLPixelBuffer");
-    
-    CGLContextObj openGLContext;
-    
-    err = CGLCreateContext(pix, NULL, &openGLContext);
-    if (err)
-    {
-        std::cout << CGLErrorString(err) << std::endl;
-        return 1;
-    }
-    
-    // Create the OpenGL context to render with (with color and depth buffers)
-    //openGLContext = [[NSOpenGLContext alloc] initWithFormat:pixFormat shareContext:nil];
-    NULL_ERROR_EXIT(openGLContext, "Unable to create NSOpenGLContext");
-    
-    GLint screen;
-    
-    err = CGLGetVirtualScreen(openGLContext, &screen);
-    if (err)
-    {
-        std::cout << CGLErrorString(err) << std::endl;
-        return 1;
-    }
-    
-    
-    err = CGLSetPBuffer(openGLContext, pixBuf, 0, 0, screen);
-    if (err)
-    {
-        std::cout << CGLErrorString(err) << std::endl;
-        return 1;
-    }
-/*    [openGLContext setPixelBuffer:pixBuf cubeMapFace:0 mipMapLevel:0 currentVirtualScreen:[openGLContext currentVirtualScreen]]; */
-    CGLSetCurrentContext(openGLContext);
-//    [openGLContext makeCurrentContext];
-    
-    /*
-     * Test if framebuffer objects are supported
-     */
-    
-    const GLubyte* strExt = glGetString(GL_EXTENSIONS);
-    GLboolean fboSupported = gluCheckExtension((const GLubyte*)"GL_EXT_framebuffer_object", strExt);
-    if (!fboSupported)
-        REPORT_ERROR_AND_EXIT("Your system does not support framebuffer extension - unable to render scene");
+    std::string path = argv[1]; std::cout << "Shader path: " << path << std::endl;
     
     /*
      * Create an FBO
@@ -171,34 +59,83 @@ int main (int argc, char * const argv[])
     int     img_width = 128, img_height = 128; // <-- pixel size of the rendered scene - hardcoded values for testing
     
     // Depth buffer to use for depth testing - optional if you're not using depth testing
-    glGenRenderbuffersEXT(1, &depthBuffer);
-    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depthBuffer);
-    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, img_width, img_height);
+    glGenRenderbuffers(1, &depthBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, img_width, img_height);
     REPORTGLERROR("creating depth render buffer");
     
     // Render buffer to use for imaging
-    glGenRenderbuffersEXT(1, &renderBuffer);
-    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderBuffer);
-    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, img_width, img_height);
+    glGenRenderbuffers(1, &renderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, img_width, img_height);
     REPORTGLERROR("creating color render buffer");
     
     GLuint  fbo = 0;
-    glGenFramebuffersEXT(1, &fbo);
+    glGenFramebuffers(1, &fbo);
     
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     REPORTGLERROR("binding framebuffer");
     
-    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, renderBuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderBuffer);
     REPORTGLERROR("specifying color render buffer");
     
-    if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE_EXT)
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         REPORT_ERROR_AND_EXIT("Problem with OpenGL framebuffer after specifying color render buffer.");
     
-    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depthBuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
     REPORTGLERROR("specifying depth render buffer");
     
-    if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE_EXT)
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         REPORT_ERROR_AND_EXIT("Problem with OpenGL framebuffer after specifying depth render buffer.");
+
+    
+    Shader s;
+    s.compile("basic.fsh", GL_FRAGMENT_SHADER);
+    s.compile("basic.vsh", GL_VERTEX_SHADER);
+    s.link();
+    s.use();
+    //    glOrtho(-img_width / 2, img_width / 2, -img_height / 2, img_height / 2, -1, 1);
+//    auto projection = glm::ortho(-img_width/2.0f, img_width / 2.0f, -img_height / 2.0f, img_height / 2.0f, -1.0f, 1.0f);
+//    auto modelview = glm::mat4(1.0f);
+    
+//    int projectionMatrix = s.uniformLocation("ProjectionMatrix");
+    REPORTGLERROR("Get Uniform location for p matrix");
+//    int modelViewMatrix = s.uniformLocation("ModelViewMatrix");
+    REPORTGLERROR("Get Uniform location for mv matrix");
+    
+//    glUniformMatrix4fv(projectionMatrix, 1, GL_FALSE, glm::value_ptr(projection));
+//    REPORTGLERROR("give it projection matrix");
+//    glUniformMatrix4fv(modelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview));
+//    REPORTGLERROR("give it model view matrix");
+    
+
+    
+    GLuint arraybuffer[1]; 
+    glGenBuffers(1, arraybuffer);
+    
+// std::vector<double> triangle ;
+    
+    struct vertex {
+        glm::vec4 position;
+        glm::vec4 colour;
+    } triangle[] = { { glm::vec4(0.0f, .600f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { glm::vec4(.400f, -.400f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { glm::vec4(-.400f, -.400f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) }}; 
+    /*
+    glm::vec4 position[] = { glm::vec4(0.0f, .600f, 0.0f, 1.0f), 
+        glm::vec4(.400f, -.400f, 0.0f, 1.0f), 
+        glm::vec4(-.400f, -.400f, 0.0f, 1.0f) };
+*/
+// } triangle[] = { { glm::vec4(0.0f, 60.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
+// { glm::vec4(40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
+// { glm::vec4(-40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) }};
+
+  //  cout << "Size of triangle: " << sizeof(position) << endl;
+    glBindBuffer(GL_ARRAY_BUFFER, arraybuffer[0]);
+    REPORTGLERROR("bound array buffer");
+    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), (GLvoid*)triangle, GL_STATIC_DRAW);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(position), (GLvoid*)position, GL_STATIC_DRAW);
+    REPORTGLERROR("Buffer array data");
     
     /*
      * Render a simple shape to the FBO
@@ -213,12 +150,12 @@ int main (int argc, char * const argv[])
     glViewport(0, 0, img_width, img_height);
     REPORTGLERROR("specifying viewport");
     
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-img_width / 2, img_width / 2, -img_height / 2, img_height / 2, -1, 1);
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+//    glOrtho(-img_width / 2, img_width / 2, -img_height / 2, img_height / 2, -1, 1);
     
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
     REPORTGLERROR("setting up view/model matrices");
     
     glClear(GL_COLOR_BUFFER_BIT);
@@ -227,6 +164,36 @@ int main (int argc, char * const argv[])
     glClear(GL_DEPTH_BUFFER_BIT);
     REPORTGLERROR("clearing depth buffer");
     
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    REPORTGLERROR("gen vao");
+    
+    glBindVertexArray(vao);
+    REPORTGLERROR("bind vao");
+    
+    glEnableVertexAttribArray(0);
+    REPORTGLERROR("enable array 0");
+    glEnableVertexAttribArray(1);
+    REPORTGLERROR("enable array 1");
+    
+//    cout << "Offsets: " << offsetof(vertex, position) << "  and " << offsetof(vertex, colour) << endl;
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (GLvoid*)offsetof(vertex, position));  
+//    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);  
+    REPORTGLERROR("tell it vertex data");
+    
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (GLvoid*)offsetof(vertex, colour));
+    REPORTGLERROR("tell it colour data");
+    
+    s.validate();
+    REPORTGLERROR("Validate program");
+    
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    REPORTGLERROR("rendering scene");
+    
+    glFinish();
+    REPORTGLERROR("glFinish()");
+    /*
     glBegin(GL_TRIANGLES);
     glColor3f(1.0, 0.0, 0.0);
     glVertex3f(0.0, 60.0, 0.0);
@@ -234,8 +201,8 @@ int main (int argc, char * const argv[])
     glVertex3f(40.0, -40.0, 0.0);
     glColor3f(0.0, 0.0, 1.0);
     glVertex3f(-40.0, -40.0, 0.0);
-    glEnd();
-    REPORTGLERROR("rendering scene");
+    glEnd(); */
+
     
     /*
      * Extract the resulting rendering as an image
@@ -258,7 +225,7 @@ int main (int argc, char * const argv[])
     }
     
     // "un"bind my FBO
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     
     /*
      * Output the image to a file
@@ -313,28 +280,8 @@ int main (int argc, char * const argv[])
     CGColorSpaceRelease( colorSpace );
     CGImageRelease(imageRef);
     
-//    [openGLContext clearDrawable];
-    err = CGLClearDrawable(openGLContext);
-    if (err)
-    {
-        std::cout << CGLErrorString(err) << std::endl;
-        return 1;
-    }
-
-    
-//    [openGLContext release];
-    err = CGLDestroyContext(openGLContext);
-    if (err)
-    {
-        std::cout << CGLErrorString(err) << std::endl;
-        return 1;
-    }
-
-    
-    //[pixBuf release];
-    err = CGLDestroyPBuffer(pixBuf);
-    
-//	[pool release];
+    context.clearDrawable();
     
     return 0;
 }
+
