@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		767D1BCC1486BE65008CCDA4 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 767D1BCB1486BE65008CCDA4 /* main.cpp */; };
 		767D1BCE1486BE65008CCDA4 /* GrapheinPure.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 767D1BCD1486BE65008CCDA4 /* GrapheinPure.1 */; };
 		767D1BD51486BE8B008CCDA4 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 767D1BD41486BE8B008CCDA4 /* OpenGL.framework */; };
 		767D1BD71486DD28008CCDA4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 767D1BD61486DD28008CCDA4 /* Cocoa.framework */; };
 		767D1BD91486F388008CCDA4 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 767D1BD81486F388008CCDA4 /* ApplicationServices.framework */; };
+		76A73204148700D6004FB2EB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76A73203148700D6004FB2EB /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,11 +29,11 @@
 
 /* Begin PBXFileReference section */
 		767D1BC71486BE65008CCDA4 /* GrapheinPure */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GrapheinPure; sourceTree = BUILT_PRODUCTS_DIR; };
-		767D1BCB1486BE65008CCDA4 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		767D1BCD1486BE65008CCDA4 /* GrapheinPure.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = GrapheinPure.1; sourceTree = "<group>"; };
 		767D1BD41486BE8B008CCDA4 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		767D1BD61486DD28008CCDA4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		767D1BD81486F388008CCDA4 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		76A73203148700D6004FB2EB /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +72,7 @@
 		767D1BCA1486BE65008CCDA4 /* GrapheinPure */ = {
 			isa = PBXGroup;
 			children = (
-				767D1BCB1486BE65008CCDA4 /* main.cpp */,
+				76A73203148700D6004FB2EB /* main.cpp */,
 				767D1BCD1486BE65008CCDA4 /* GrapheinPure.1 */,
 			);
 			path = GrapheinPure;
@@ -128,7 +128,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				767D1BCC1486BE65008CCDA4 /* main.cpp in Sources */,
+				76A73204148700D6004FB2EB /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,6 +219,7 @@
 				767D1BD31486BE65008CCDA4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
