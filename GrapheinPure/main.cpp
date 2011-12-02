@@ -11,6 +11,10 @@
 #include <iostream>         // for error output
 #include <vector>
 
+//#include <boost/numeric/ublas/matrix.hpp>
+//#include <boost/numeric/ublas/io.hpp>
+
+
 #include <OpenGL/OpenGL.h>
 
 #include <OpenGL/gl3.h>
@@ -25,7 +29,11 @@
 
 #include "Context.h"
 #include "Shader.h"
-#include "Buffer.h"
+#include "VertexBuffer.h"
+#include "RenderBuffer.h"
+
+//#include "iso.h"
+
 
 /*
     Notes:
@@ -37,6 +45,45 @@
  */
 int main (int argc, char * const argv[])
 {
+/*    iso::mat4<float> m(iso::vec4<float>(0, 1, 2, 3), 
+                iso::vec4<float>(4, 5, 6, 7),
+                iso::vec4<float>(8, 9, 10, 11),
+                iso::vec4<float>(12, 13, 14, 15));
+    
+    std::cout << m << std::endl;
+    
+    m.transpose();
+    
+    std::cout << m << std::endl;
+    
+    cout << "sizeof m: " << sizeof(m) << std::endl;
+    m.transpose();
+    const float *m2 = m.data();
+    
+    for (int i = 0; i < 16; i++)
+    {
+        cout << m2[i] << endl;
+    }
+  */
+    /*
+    namespace ublas = boost::numeric::ublas;
+    
+    ublas::matrix<float, ublas::row_major> m(4,4);
+    for (int i = 0; i < m.size1() * m.size2(); i++)
+    {
+        m(i / m.size2(), i % m.size2()) = i;
+    }
+    
+    std::cout << m << std::endl;
+    const float *m2 = &m.data()[0];
+
+    for (int i = 0; i < m.data().size(); i++)
+    {
+        cout << m2[i] << endl;
+    }    */
+    
+    
+    
     /*
      * Create an OpenGL context just so that OpenGL calls will work. I'm not using it for actual rendering.
      */
@@ -52,54 +99,13 @@ int main (int argc, char * const argv[])
     
     std::string path = argv[1]; std::cout << "Shader path: " << path << std::endl;
     
-    /*
-     * Create an FBO
-     */
-    
-    GLuint  renderBuffer = 0;
-    GLuint  depthBuffer = 0;
-    int     img_width = 128, img_height = 128; // <-- pixel size of the rendered scene - hardcoded values for testing
-    
-    // Depth buffer to use for depth testing - optional if you're not using depth testing
-    glGenRenderbuffers(1, &depthBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, img_width, img_height);
-    REPORTGLERROR("creating depth render buffer");
-    
-    // Render buffer to use for imaging
-    glGenRenderbuffers(1, &renderBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, img_width, img_height);
-    REPORTGLERROR("creating color render buffer");
-    
-    GLuint  fbo = 0;
-    glGenFramebuffers(1, &fbo);
-    
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    REPORTGLERROR("binding framebuffer");
-    
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderBuffer);
-    REPORTGLERROR("specifying color render buffer");
-    
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        REPORT_ERROR_AND_EXIT("Problem with OpenGL framebuffer after specifying color render buffer.");
-    
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
-    REPORTGLERROR("specifying depth render buffer");
-    
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        REPORT_ERROR_AND_EXIT("Problem with OpenGL framebuffer after specifying depth render buffer.");
+    RenderBuffer render(128, 128, true); // use a buffer with depth
+    render.use();
 
-    
     context.addShader("basic", "basic.vsh", "basic.fsh");
-    context.ortho(-img_width/2.0f, img_width / 2.0f, -img_height / 2.0f, img_height / 2.0f, -1.0f, 1.0f);
+    context.ortho(-render.width()/2.0f, render.width() / 2.0f, -render.height() / 2.0f, render.height() / 2.0f, -1.0f, 1.0f);
     context.useShader("basic");
-    
-    GLuint arraybuffer[1]; 
-    glGenBuffers(1, arraybuffer);
-    
-// std::vector<double> triangle ;
-    
+
     glm::vec4 stuff[] = { glm::vec4(0.0f, 60.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
          glm::vec4(40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),
          glm::vec4(-40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) };
@@ -107,142 +113,20 @@ int main (int argc, char * const argv[])
     VertexBuffer vertices;
     vertices.buffer(6, stuff);
     
-    /*
-    struct vertex {
-        glm::vec4 position;
-        glm::vec4 colour;
-    } triangle[] = { { glm::vec4(0.0f, 60.0f, 0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
-                     { glm::vec4(40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) },
-                     { glm::vec4(-40.0f, -40.0f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) }};
-
-    
-  //  cout << "Size of triangle: " << sizeof(position) << endl;
-    glBindBuffer(GL_ARRAY_BUFFER, arraybuffer[0]);
-    REPORTGLERROR("bound array buffer");
-    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), (GLvoid*)triangle, GL_STATIC_DRAW);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(position), (GLvoid*)position, GL_STATIC_DRAW);
-    REPORTGLERROR("Buffer array data");
-    */
-    /*
-     * Render a simple shape to the FBO
-     */
-    
     context.depthTest(true);
     context.clearColour(glm::vec4(0.0, 0.0, 0.0, 1.0));
-    context.viewport(0, 0, img_width, img_height);
+    context.viewport(0, 0, render.width(), render.height());
     context.clearColourBuffer();
     context.clearDepthBuffer();
     
-    /*
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    REPORTGLERROR("gen vao");
-    
-    glBindVertexArray(vao);
-    REPORTGLERROR("bind vao");
-    
-    glEnableVertexAttribArray(0);
-    REPORTGLERROR("enable array 0");
-    glEnableVertexAttribArray(1);
-    REPORTGLERROR("enable array 1");
-    
-    */
-    vertices.enableLocation(0, 0, 1);
-    vertices.enableLocation(1, 1, 1);
+    vertices.enableLocation(0, 0, 2);
+    vertices.enableLocation(1, 1, 2);
     vertices.drawTriangles(0, 3);
-
-//    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (GLvoid*)offsetof(vertex, position));  
-//    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);  
-//    REPORTGLERROR("tell it vertex data");
-    
-  //  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (GLvoid*)offsetof(vertex, colour));
-//    REPORTGLERROR("tell it colour data");
-    
-//    s.validate();
-//    REPORTGLERROR("Validate program");
-    
-  //  glDrawArrays(GL_TRIANGLES, 0, 3);
-//    REPORTGLERROR("rendering scene");
     
     glFinish();
     REPORTGLERROR("glFinish()");
 
-    
-    /*
-     * Extract the resulting rendering as an image
-     */
-    
-    int samplesPerPixel = 4; // R, G, B and A
-    int rowBytes = samplesPerPixel * img_width;
-    char* bufferData = (char*)malloc(rowBytes * img_height);
-    NULL_ERROR_EXIT(bufferData, "Unable to allocate buffer for image extraction.");
-    
-    glReadPixels(0, 0, img_width, img_height, GL_BGRA, GL_UNSIGNED_BYTE, bufferData);
-    REPORTGLERROR("reading pixels from framebuffer");
-    
-    // Flip it vertically - images read from OpenGL buffers are upside-down
-    char* flippedBuffer = (char*)malloc(rowBytes * img_height);
-    NULL_ERROR_EXIT(flippedBuffer, "Unable to allocate flipped buffer for corrected image.");
-    for (int i = 0 ; i < img_height ; i++)
-    {
-        bcopy(bufferData + i * rowBytes, flippedBuffer + (img_height - i - 1) * rowBytes, rowBytes);
-    }
-    
-    // "un"bind my FBO
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    
-    /*
-     * Output the image to a file
-     */
-    
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-    CGBitmapInfo bitmapInfo = kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little;	// XRGB Little Endian
-    int bitsPerComponent = 8;
-    CGContextRef contextRef = CGBitmapContextCreate(flippedBuffer,
-                                                    img_width, img_height, bitsPerComponent, rowBytes, colorSpace, bitmapInfo);
-    NULL_ERROR_EXIT(contextRef, "Unable to create CGContextRef.");
-    
-    CGImageRef imageRef = CGBitmapContextCreateImage(contextRef);
-    NULL_ERROR_EXIT(imageRef, "Unable to create CGImageRef.");
-    
-    Boolean isDirectory = false;
-    CFURLRef fileURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault,
-                                                     CFSTR(kOutputFile), kCFURLPOSIXPathStyle, isDirectory);
-    NULL_ERROR_EXIT(fileURL, "Unable to create file URL ref.");
-    
-    CFIndex                 fileImageIndex = 1;
-    CFMutableDictionaryRef  fileDict       = NULL;
-    CFStringRef             fileUTType     = kUTTypeJPEG;
-    
-    // Create an image destination opaque reference for authoring an image file
-    CGImageDestinationRef imageDest = CGImageDestinationCreateWithURL(fileURL, 
-                                                                      fileUTType, 
-                                                                      fileImageIndex, 
-                                                                      fileDict);
-    
-    NULL_ERROR_EXIT(imageDest, "Unable to create CGImageDestinationRef.");
-    
-    CFIndex capacity = 1;
-    CFMutableDictionaryRef imageProps = CFDictionaryCreateMutable(kCFAllocatorDefault, 
-                                                                  capacity,
-                                                                  &kCFTypeDictionaryKeyCallBacks,
-                                                                  &kCFTypeDictionaryValueCallBacks);
-    
-    CGImageDestinationAddImage(imageDest, imageRef, imageProps);
-    CGImageDestinationFinalize(imageDest);
-    
-    /*
-     * Cleanup
-     */
-    
-    free(flippedBuffer);
-    free(bufferData);
-    
-    CFRelease(imageDest);
-    CFRelease(fileURL);
-    CFRelease(imageProps);
-    CGColorSpaceRelease( colorSpace );
-    CGImageRelease(imageRef);
+    render.image();
     
     context.clearDrawable();
     

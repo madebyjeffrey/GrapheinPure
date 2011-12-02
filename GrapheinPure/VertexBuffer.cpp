@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-#include "Buffer.h"
+#include "VertexBuffer.h"
 #include "Context.h"
 
 VertexBuffer::VertexBuffer()
@@ -18,13 +18,14 @@ VertexBuffer::VertexBuffer()
     
 }
 
-bool VertexBuffer::buffer(int count, const glm::vec4 *glm)
+bool VertexBuffer::buffer(int count, const glm::vec4 *pos)
 {
-//    for (int i = 0; i < count; i++)
-
-    while (count--)
-    {   
-        data.push_back(glm[count]);
+    for (int i = 0; i < count; i++)
+    {
+        data.push_back(pos[i]);
+        
+        std::cout << "(" << pos[i].x << ", " << pos[i].y << ", " 
+             << pos[i].z << ", " << pos[i].w << ")" << std::endl;
     }
     
     glBindBuffer(GL_ARRAY_BUFFER, array_buffer);

@@ -16,7 +16,9 @@
 		76A7320A148735DB004FB2EB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76A73208148735DB004FB2EB /* Shader.cpp */; };
 		76A732EF14873D0D004FB2EB /* basic.fsh in CopyFiles */ = {isa = PBXBuildFile; fileRef = 76A732EA14873CA8004FB2EB /* basic.fsh */; };
 		76A732F014873D0F004FB2EB /* basic.vsh in CopyFiles */ = {isa = PBXBuildFile; fileRef = 76A732EB14873CA8004FB2EB /* basic.vsh */; };
-		76A732F714880609004FB2EB /* Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76A732F614880609004FB2EB /* Buffer.cpp */; };
+		76A732F714880609004FB2EB /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76A732F614880609004FB2EB /* VertexBuffer.cpp */; };
+		76A732FB148896FC004FB2EB /* RenderBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76A732FA148896FC004FB2EB /* RenderBuffer.cpp */; };
+		76A732FD1488B983004FB2EB /* libpng15.15.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 76A732FC1488B983004FB2EB /* libpng15.15.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -273,8 +275,12 @@
 		76A732E8148735E7004FB2EB /* xstream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = xstream.hpp; sourceTree = "<group>"; };
 		76A732EA14873CA8004FB2EB /* basic.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = basic.fsh; sourceTree = "<group>"; };
 		76A732EB14873CA8004FB2EB /* basic.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = basic.vsh; sourceTree = "<group>"; };
-		76A732F5148805FC004FB2EB /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
-		76A732F614880609004FB2EB /* Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Buffer.cpp; sourceTree = "<group>"; };
+		76A732F5148805FC004FB2EB /* VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexBuffer.h; sourceTree = "<group>"; };
+		76A732F614880609004FB2EB /* VertexBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBuffer.cpp; sourceTree = "<group>"; };
+		76A732F8148837F9004FB2EB /* iso.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iso.h; sourceTree = "<group>"; };
+		76A732F9148896F2004FB2EB /* RenderBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderBuffer.h; sourceTree = "<group>"; };
+		76A732FA148896FC004FB2EB /* RenderBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBuffer.cpp; sourceTree = "<group>"; };
+		76A732FC1488B983004FB2EB /* libpng15.15.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng15.15.dylib; path = ../../../../usr/X11/lib/libpng15.15.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,6 +288,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76A732FD1488B983004FB2EB /* libpng15.15.dylib in Frameworks */,
 				767D1BD91486F388008CCDA4 /* ApplicationServices.framework in Frameworks */,
 				767D1BD71486DD28008CCDA4 /* Cocoa.framework in Frameworks */,
 				767D1BD51486BE8B008CCDA4 /* OpenGL.framework in Frameworks */,
@@ -294,6 +301,7 @@
 		767D1BBC1486BE64008CCDA4 = {
 			isa = PBXGroup;
 			children = (
+				76A732FC1488B983004FB2EB /* libpng15.15.dylib */,
 				767D1BD81486F388008CCDA4 /* ApplicationServices.framework */,
 				767D1BD61486DD28008CCDA4 /* Cocoa.framework */,
 				767D1BD41486BE8B008CCDA4 /* OpenGL.framework */,
@@ -316,14 +324,17 @@
 			children = (
 				76A732EA14873CA8004FB2EB /* basic.fsh */,
 				76A732EB14873CA8004FB2EB /* basic.vsh */,
-				76A73208148735DB004FB2EB /* Shader.cpp */,
-				76A73209148735DB004FB2EB /* Shader.h */,
 				76A73203148700D6004FB2EB /* main.cpp */,
 				767D1BCD1486BE65008CCDA4 /* GrapheinPure.1 */,
 				76A73205148703A4004FB2EB /* Context.cpp */,
 				76A732071487040E004FB2EB /* Context.h */,
-				76A732F5148805FC004FB2EB /* Buffer.h */,
-				76A732F614880609004FB2EB /* Buffer.cpp */,
+				76A732F5148805FC004FB2EB /* VertexBuffer.h */,
+				76A732F614880609004FB2EB /* VertexBuffer.cpp */,
+				76A73208148735DB004FB2EB /* Shader.cpp */,
+				76A73209148735DB004FB2EB /* Shader.h */,
+				76A732F8148837F9004FB2EB /* iso.h */,
+				76A732F9148896F2004FB2EB /* RenderBuffer.h */,
+				76A732FA148896FC004FB2EB /* RenderBuffer.cpp */,
 			);
 			path = GrapheinPure;
 			sourceTree = "<group>";
@@ -638,7 +649,8 @@
 				76A73204148700D6004FB2EB /* main.cpp in Sources */,
 				76A73206148703A4004FB2EB /* Context.cpp in Sources */,
 				76A7320A148735DB004FB2EB /* Shader.cpp in Sources */,
-				76A732F714880609004FB2EB /* Buffer.cpp in Sources */,
+				76A732F714880609004FB2EB /* VertexBuffer.cpp in Sources */,
+				76A732FB148896FC004FB2EB /* RenderBuffer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -699,6 +711,11 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				HEADER_SEARCH_PATHS = /usr/X11/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/X11/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -710,6 +727,11 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				HEADER_SEARCH_PATHS = /usr/X11/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/X11/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

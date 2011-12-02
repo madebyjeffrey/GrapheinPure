@@ -26,7 +26,7 @@ class VertexBuffer
 public:
     VertexBuffer();
 
-    bool buffer(int count, const glm::vec4 *glm);
+    bool buffer(int count, const glm::vec4 *pos);
     
     bool enableLocation(int location, int start_index, int skip);
     bool disableLocation(int location);
