@@ -4,15 +4,9 @@
 
 using namespace std;
 
-glm::mat4 Shader::viewportTranslation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0));
-glm::mat4 Shader::projectionMatrix = glm::ortho<float>(0, 0, 0, 0, 0, 0);
-
-
 
 Shader::Shader() : program(0), shaders(vector<GLuint>()) 
 {
-        // do not create program here, because it will be initialized before gl context
-//    program = glCreateProgram();
 }
 
 Shader::~Shader() 
@@ -86,7 +80,7 @@ bool Shader::link()
     program = glCreateProgram();
     REPORTGLERROR("Create program");
     
-    BOOST_FOREACH(auto s, shaders) 
+    for (auto s : shaders)
     {
         glAttachShader(program, s);
         REPORTGLERROR("attach shader");

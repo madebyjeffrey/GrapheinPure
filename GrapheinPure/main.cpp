@@ -11,21 +11,8 @@
 #include <iostream>         // for error output
 #include <vector>
 
-//#include <boost/numeric/ublas/matrix.hpp>
-//#include <boost/numeric/ublas/io.hpp>
-
-
-#include <OpenGL/OpenGL.h>
-
 #include <OpenGL/gl3.h>
 
-//#include <OpenGL/glu.h>
-//#include <OpenGL/glext.h>      
-#include <ApplicationServices/ApplicationServices.h> //CGColorSpace.h
-
-#include "../glm/glm.hpp"
-#include "../glm/gtc/matrix_transform.hpp"
-#include "../glm/gtc/type_ptr.hpp"
 
 #include "Context.h"
 #include "Shader.h"
@@ -45,44 +32,6 @@
  */
 int main (int argc, char * const argv[])
 {
-/*    iso::mat4<float> m(iso::vec4<float>(0, 1, 2, 3), 
-                iso::vec4<float>(4, 5, 6, 7),
-                iso::vec4<float>(8, 9, 10, 11),
-                iso::vec4<float>(12, 13, 14, 15));
-    
-    std::cout << m << std::endl;
-    
-    m.transpose();
-    
-    std::cout << m << std::endl;
-    
-    cout << "sizeof m: " << sizeof(m) << std::endl;
-    m.transpose();
-    const float *m2 = m.data();
-    
-    for (int i = 0; i < 16; i++)
-    {
-        cout << m2[i] << endl;
-    }
-  */
-    /*
-    namespace ublas = boost::numeric::ublas;
-    
-    ublas::matrix<float, ublas::row_major> m(4,4);
-    for (int i = 0; i < m.size1() * m.size2(); i++)
-    {
-        m(i / m.size2(), i % m.size2()) = i;
-    }
-    
-    std::cout << m << std::endl;
-    const float *m2 = &m.data()[0];
-
-    for (int i = 0; i < m.data().size(); i++)
-    {
-        cout << m2[i] << endl;
-    }    */
-    
-    
     
     /*
      * Create an OpenGL context just so that OpenGL calls will work. I'm not using it for actual rendering.

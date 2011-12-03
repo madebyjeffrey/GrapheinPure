@@ -10,19 +10,12 @@
 #include <sstream>
 #include <array>
 
-#include <OpenGL/OpenGL.h>
-
-//#include <OpenGL/gl3.h>
-//#define __gl_h_
 #include <OpenGL/gl3.h>
-//#include <OpenGL/glext.h>
 
 
-#include "../glm/glm.hpp"
-#include "../glm/gtc/matrix_transform.hpp"
-#include "../glm/gtc/type_ptr.hpp"
-
-#include <boost/foreach.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 
@@ -49,9 +42,6 @@ public:
     int attributeLocation(const char *name);
     
     bool setUniform(const std::string &uniformName, const glm::mat4 &matrix);
-    
-    static glm::mat4 viewportTranslation;
-    static glm::mat4 projectionMatrix;
 };
 
 #endif
