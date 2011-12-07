@@ -13,24 +13,159 @@
 
 #include <OpenGL/gl3.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "glError.h"
 
+#include "iso.h"
+
+class PCPacked
+{
+public:
+    bool position() 
+    {
+        return true;
+    }
+    
+    bool colour()
+    {
+        return true;
+    }
+    
+    size_t position_index(size_t elements)
+    {
+        return 0;
+    }
+    size_t colour_index(size_t elements)
+    {
+        return 1;
+    }
+    size_t position_skip(size_t elements)
+    {
+        return 2;
+    }
+    size_t colour_skip(size_t elements)
+    {
+        return 2;
+    }
+};
+
+template<class Layout=PCPacked>
+class VertexBuffer;
+
+template<class Layout>
+VertexBuffer<Layout> &commit(VertexBuffer<Layout> &);
+
+template<class Layout>
+VertexBuffer<Layout> &operator<<(VertexBuffer<Layout>&, VertexBuffer<Layout> &(*)(VertexBuffer<Layout> &));
+
+template<class Layout>
 class VertexBuffer
 {
-    std::vector<glm::vec4> data;
+    friend VertexBuffer<Layout> &commit<>(VertexBuffer<Layout> &);
+    
+    std::vector<iso::vec4> data;
     GLuint array_buffer;
     GLuint vertex_buffer;
-    
-public:
-    VertexBuffer();
+    Layout layout;
 
-    bool buffer(int count, const glm::vec4 *pos);
+//    bool enableLocation(int location, int start_index, int skip);
+//    bool disableLocation(int location);
+
+public:
+    VertexBuffer()
+    {
+        glGenBuffers(1, &array_buffer);
+        glGenVertexArrays(1, &vertex_buffer);
+        
+    }
     
-    bool enableLocation(int location, int start_index, int skip);
-    bool disableLocation(int location);
-    bool drawTriangles(int index, int count);
+    bool drawTriangles(int index, int count)
+    {
+        glBindVertexArray(vertex_buffer);
+        REPORTGLERROR("select vao");
+        
+        glDrawArrays(GL_TRIANGLES, index, count);
+        REPORTGLERROR("draw triangles");
+        
+        return true;
+        
+    }
+
+    VertexBuffer &operator <<(iso::vec4 const &data)   // buffer data
+    {
+        this->data.push_back(data);
+        
+        return *this;
+    }
+    
+    
 };
+
+template <typename Layout>
+VertexBuffer<Layout> &commit(VertexBuffer<Layout> &buf)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, buf.array_buffer);
+    REPORTGLERROR("bound array buffer");
+    
+    for (auto i : buf.data)
+    {
+        for (auto j : i)
+        {
+            std::cout << j << "   ";
+        }
+        std::cout << std::endl;
+    } 
+    
+    float *list = (float*)buf.data.data();
+    
+    std::cout << buf.data.size() << std::endl;
+    
+    for (int i = 0; i < 6 * 4; i++)
+        std::cout << i << ": " << list[i] << std::endl;
+    
+    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(iso::vec4)*buf.data.size(), (GLvoid*)buf.data.data(), GL_STATIC_DRAW);
+    REPORTGLERROR("Buffer array data");
+    
+    std::cout << "Position Skip: " << buf.layout.position_skip(buf.data.size())*sizeof(iso::vec4) << std::endl;
+    std::cout << "Position Index: " << (buf.layout.position_index(buf.data.size()) * sizeof(iso::vec4)) << std::endl;
+    
+    std::cout << "Colour Skip: " << buf.layout.colour_skip(buf.data.size())*sizeof(iso::vec4) << std::endl;
+    std::cout << "Colour Index: " << (buf.layout.colour_index(buf.data.size()) * sizeof(iso::vec4)) << std::endl;
+
+    std::cout << "===" << std::endl;
+    
+    std::cout << "Position Skip: " << buf.layout.position_skip(buf.data.size()) << std::endl;
+    std::cout << "Position Index: " << buf.layout.position_index(buf.data.size()) << std::endl;
+    
+    std::cout << "Colour Skip: " << buf.layout.colour_skip(buf.data.size()) << std::endl;
+    std::cout << "Colour Index: " << buf.layout.colour_index(buf.data.size()) << std::endl;
+
+    
+    glBindVertexArray(buf.vertex_buffer);
+
+    if (buf.layout.position())
+    {
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 
+                              (GLsizei)buf.layout.position_skip(buf.data.size())*sizeof(iso::vec4), 
+                              (GLvoid*)(buf.layout.position_index(buf.data.size()) * sizeof(iso::vec4)));
+    } 
+    if (buf.layout.colour())
+    {
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 
+                              (GLsizei)buf.layout.colour_skip(buf.data.size())*sizeof(iso::vec4), 
+                              (GLvoid*)(buf.layout.colour_index(buf.data.size()) * sizeof(iso::vec4)));
+    } 
+    
+    return buf;
+}// upload it
+
+template<class Layout>
+VertexBuffer<Layout> &operator<<(VertexBuffer<Layout>&buf, VertexBuffer<Layout> &(*f)(VertexBuffer<Layout> &))
+{
+    return f(buf);
+}
+
 
 #endif

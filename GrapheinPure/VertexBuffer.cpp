@@ -8,43 +8,19 @@
 
 #include <iostream>
 
-#include "VertexBuffer.h"
-#include "Context.h"
+//#include "VertexBuffer.h"
 
-VertexBuffer::VertexBuffer()
+
+template<class Layout>
+VertexBuffer<Layout>::VertexBuffer()
 {
     glGenBuffers(1, &array_buffer);
     glGenVertexArrays(1, &vertex_buffer);
-    
+ 
 }
-
-bool VertexBuffer::buffer(int count, const glm::vec4 *pos)
-{
-    for (int i = 0; i < count; i++)
-    {
-        data.push_back(pos[i]);
-        
-        std::cout << "(" << pos[i].x << ", " << pos[i].y << ", " 
-             << pos[i].z << ", " << pos[i].w << ")" << std::endl;
-    }
-    
-    glBindBuffer(GL_ARRAY_BUFFER, array_buffer);
-    REPORTGLERROR("bound array buffer");
-    std::cout << "size: " << sizeof(glm::vec4) << std::endl;
-    
-    std::cout << "size: " << data.size() << std::endl;
-    
-    std::cout << "size: " << sizeof(glm::vec4)*data.size() << std::endl;
-    
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4)*data.size(), (GLvoid*)&data[0], GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4)*data.size(), (GLvoid*)data.data(), GL_STATIC_DRAW);
-    //    glBufferData(GL_ARRAY_BUFFER, sizeof(position), (GLvoid*)position, GL_STATIC_DRAW);
-    REPORTGLERROR("Buffer array data");
-
-    return true;
-}
-
-bool VertexBuffer::enableLocation(int location, int start_index, int skip)
+/*
+template<class Layout>
+bool VertexBuffer<Layout>::enableLocation(int location, int start_index, int skip)
 {
     glBindVertexArray(vertex_buffer);
     REPORTGLERROR("bind vao");
@@ -54,15 +30,16 @@ bool VertexBuffer::enableLocation(int location, int start_index, int skip)
 
 //    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (GLvoid*)offsetof(vertex, position));  
     
-    std::cout << "stride: " << skip*sizeof(glm::vec4) << std::endl;
-    std::cout << "start: " << start_index * sizeof(glm::vec4) << std::endl;
-    glVertexAttribPointer(location, 4, GL_FLOAT, GL_FALSE, skip*sizeof(glm::vec4), (GLvoid*)(start_index * sizeof(glm::vec4)));
+//    std::cout << "stride: " << skip*sizeof(glm::vec4) << std::endl;
+//    std::cout << "start: " << start_index * sizeof(glm::vec4) << std::endl;
+    glVertexAttribPointer(location, 4, GL_FLOAT, GL_FALSE, skip*sizeof(iso::vec4), (GLvoid*)(start_index * sizeof(iso::vec4)));
     REPORTGLERROR("tell it vertex data");
     
     return true;
 }
 
-bool VertexBuffer::disableLocation(int location)
+template<class Layout>
+bool VertexBuffer<Layout>::disableLocation(int location)
 {
     glBindVertexArray(vertex_buffer);
     REPORTGLERROR("bind vao");
@@ -71,9 +48,10 @@ bool VertexBuffer::disableLocation(int location)
     REPORTGLERROR("disable array location");
 
     return true;
-}
+}*/
 
-bool VertexBuffer::drawTriangles(int index, int count)
+template<class Layout>
+bool VertexBuffer<Layout>::drawTriangles(int index, int count)
 {
     glBindVertexArray(vertex_buffer);
     REPORTGLERROR("select vao");
@@ -83,4 +61,43 @@ bool VertexBuffer::drawTriangles(int index, int count)
     
     return true;
     
+}
+
+template<class Layout>
+VertexBuffer<Layout> &VertexBuffer<Layout>::operator <<(const iso::vec4 &data)
+{
+    this->data.push_back(data);
+    
+    return *this;
+}
+template<class Layout>
+VertexBuffer<Layout> &commit(VertexBuffer<Layout> &buf)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, buf.array_buffer);
+    REPORTGLERROR("bound array buffer");
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(iso::vec4)*buf.data.size(), (GLvoid*)buf.data.data(), GL_STATIC_DRAW);
+    REPORTGLERROR("Buffer array data");
+    
+    glBindVertexArray(buf.vertex_buffer);
+    if (buf.layout.position())
+    {
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 
+                              buf.layout.position_skip(buf.data.size())*sizeof(iso::vec4), 
+                              (GLvoid*)(buf.layout.position_start(buf.data.size()) * sizeof(iso::vec4)));
+    } 
+    if (buf.layout.colour())
+    {
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 
+                              buf.layout.colour_skip(buf.data.size())*sizeof(iso::vec4), 
+                              (GLvoid*)(buf.layout.colour_start(buf.data.size()) * sizeof(iso::vec4)));
+    } 
+
+    return buf;
+}
+
+template<class Layout>
+VertexBuffer<Layout> &operator<<(VertexBuffer<Layout>&buf, VertexBuffer<Layout> &(*f)(VertexBuffer<Layout> &))
+{
+    return f(buf);
 }

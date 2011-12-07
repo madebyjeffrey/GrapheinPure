@@ -104,6 +104,6 @@ void RenderBuffer::image()
     rgba8_view_t img = interleaved_view(_width, _height, (rgba8_pixel_t*) bufferData, rowBytes);
     
 //    copy_pixels(flipped_up_down_view(img), 
-    png_write_view("/Users/drakej/Desktop/test_image.jpg", img);
+    png_write_view("/Users/drakej/Desktop/test_image.jpg", flipped_up_down_view(img)); //img);
 
 }

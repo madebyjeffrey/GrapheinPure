@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7671D162148D934800C20335 /* iso.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7671D161148D934800C20335 /* iso.cpp */; };
 		767D1BCE1486BE65008CCDA4 /* GrapheinPure.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 767D1BCD1486BE65008CCDA4 /* GrapheinPure.1 */; };
 		767D1BD51486BE8B008CCDA4 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 767D1BD41486BE8B008CCDA4 /* OpenGL.framework */; };
 		767D1BD71486DD28008CCDA4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 767D1BD61486DD28008CCDA4 /* Cocoa.framework */; };
@@ -16,7 +17,6 @@
 		76A7320A148735DB004FB2EB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76A73208148735DB004FB2EB /* Shader.cpp */; };
 		76A732EF14873D0D004FB2EB /* basic.fsh in CopyFiles */ = {isa = PBXBuildFile; fileRef = 76A732EA14873CA8004FB2EB /* basic.fsh */; };
 		76A732F014873D0F004FB2EB /* basic.vsh in CopyFiles */ = {isa = PBXBuildFile; fileRef = 76A732EB14873CA8004FB2EB /* basic.vsh */; };
-		76A732F714880609004FB2EB /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76A732F614880609004FB2EB /* VertexBuffer.cpp */; };
 		76A732FB148896FC004FB2EB /* RenderBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76A732FA148896FC004FB2EB /* RenderBuffer.cpp */; };
 		76A732FD1488B983004FB2EB /* libpng15.15.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 76A732FC1488B983004FB2EB /* libpng15.15.dylib */; };
 /* End PBXBuildFile section */
@@ -46,11 +46,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7671D161148D934800C20335 /* iso.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = iso.cpp; sourceTree = "<group>"; };
 		767D1BC71486BE65008CCDA4 /* GrapheinPure */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GrapheinPure; sourceTree = BUILT_PRODUCTS_DIR; };
 		767D1BCD1486BE65008CCDA4 /* GrapheinPure.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = GrapheinPure.1; sourceTree = "<group>"; };
 		767D1BD41486BE8B008CCDA4 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		767D1BD61486DD28008CCDA4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		767D1BD81486F388008CCDA4 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		76897E79148EC2F000FB1FBE /* glError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glError.h; sourceTree = "<group>"; };
 		76A73203148700D6004FB2EB /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		76A73205148703A4004FB2EB /* Context.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Context.cpp; sourceTree = "<group>"; };
 		76A732071487040E004FB2EB /* Context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Context.h; sourceTree = "<group>"; };
@@ -115,8 +117,10 @@
 				76A73208148735DB004FB2EB /* Shader.cpp */,
 				76A73209148735DB004FB2EB /* Shader.h */,
 				76A732F8148837F9004FB2EB /* iso.h */,
+				7671D161148D934800C20335 /* iso.cpp */,
 				76A732F9148896F2004FB2EB /* RenderBuffer.h */,
 				76A732FA148896FC004FB2EB /* RenderBuffer.cpp */,
+				76897E79148EC2F000FB1FBE /* glError.h */,
 			);
 			path = GrapheinPure;
 			sourceTree = "<group>";
@@ -175,8 +179,8 @@
 				76A73204148700D6004FB2EB /* main.cpp in Sources */,
 				76A73206148703A4004FB2EB /* Context.cpp in Sources */,
 				76A7320A148735DB004FB2EB /* Shader.cpp in Sources */,
-				76A732F714880609004FB2EB /* VertexBuffer.cpp in Sources */,
 				76A732FB148896FC004FB2EB /* RenderBuffer.cpp in Sources */,
+				7671D162148D934800C20335 /* iso.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

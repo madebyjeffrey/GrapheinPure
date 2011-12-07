@@ -14,63 +14,50 @@
 
 namespace iso 
 {
-    template<typename T=float>
-    class vec4
-    {
-        array<T,4> vec;
-        
-    public:
-        vec4() : vec({0, 0, 0, 0}) {} //: x(0), y(0), z(0), w(0) {} 
-        vec4(T _x, T _y, T _z, T _w) : vec({_x, _y, _z, _w}) {} //x(_x), y(_y), z(_z), w(_w) {}
-        
-        T &operator[](int n) {
-            return vec[n];
-        }
-        
-        const T*data()
-        {
-            return vec.data();
-        }
-    };
+    typedef std::array<float,2> vec2;
+    typedef std::array<float,3> vec3;
+    typedef std::array<float,4> vec4;
 
-    template<typename T=float>
-    class mat4
-    {
-        std::array<vec4<T>, 4> mat;
-        
-    public:
-        mat4(vec4<T> v0, vec4<T> v1, vec4<T> v2, vec4<T> v3) 
-        {
-            mat[0] = v0;
-            mat[1] = v1;
-            mat[2] = v2;
-            mat[3] = v3;
-        }
-        
-        vec4<T> &operator[](int i)
-        {
-            return mat[i];
-        }
-                
-        void transpose()     // transpose inplace
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < i; j++)
-                {
-                    std::swap(mat[i][j], mat[j][i]);
-                }
-            }
-        }
-        
-        const T*data()
-        {
-            return (T*)&mat[0];
-        }
-    };
+    template <typename T, std::size_t Y>
+    T x(std::array<T,Y> v);
+
+    template <typename T, std::size_t Y>
+    T y(std::array<T,Y> v);
     
-    template<typename T=float>
-    std::ostream &operator<<(std::ostream &o, mat4<T> &m)
+    template <typename T, std::size_t Y>
+    T z(std::array<T,Y> v);
+    
+    typedef std::array<vec4,2> mat4x2;
+    typedef std::array<vec4,3> mat4x3;
+    typedef std::array<vec4,4> mat4;
+
+
+    mat4x2 operator ,(const vec4 &x, const vec4 &y);
+    mat4x3 operator ,(const mat4x2 &x, const vec4 &y);
+    mat4 operator ,(const mat4x3 &x, const vec4 &y);
+    
+    mat4 ortho2d(float left, float right, 
+                 float top, float bottom,
+                 float far, float near);
+    
+    inline void transpose(mat4 &mat)
+    {
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < i; j++)
+                std::swap(mat[i][j], mat[j][i]);
+    }
+    /*
+    inline mat4 operator*(const mat4 &A, const mat4 &B)
+    {
+        mat4 C;
+        
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; i++)
+                C[i][j] = accumulate(
+    }*/
+    
+    template<typename T>
+    std::ostream &operator<<(std::ostream &o, const mat4 &m)
     {
         for (int i = 0; i < 4; i++)
         {

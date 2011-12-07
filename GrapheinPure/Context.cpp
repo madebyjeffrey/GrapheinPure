@@ -88,7 +88,7 @@ void GLContext::addShader(std::string name, std::string vertexFile, std::string 
     shaders[name] = s;
 }
 
-bool GLContext::setUniform(const std::string name, const std::string uniformName, const glm::mat4 &matrix)
+bool GLContext::setUniform(const std::string name, const std::string uniformName, const iso::mat4 &matrix)
 {
     return shaders[name].setUniform(uniformName, matrix);
 }
@@ -102,10 +102,10 @@ void GLContext::useShader(std::string name)
 
 void GLContext::ortho(float left, float right, float bottom, float top, float zNear, float zFar)
 {
-    projection = glm::ortho(left, right, bottom, top, zNear, zFar);
+    projection = iso::ortho2d(left, right, bottom, top, zNear, zFar);
 }
 
-void GLContext::clearColour(const glm::vec4 &c)
+void GLContext::clearColour(const iso::vec4 &c)
 {
     glClearColor(c[0], c[1], c[2], c[3]);
     REPORTGLERROR("specifying clear color");
@@ -148,4 +148,10 @@ void GLContext::clearDepthBuffer()
 {
     glClear(GL_DEPTH_BUFFER_BIT);
     REPORTGLERROR("clearing depth buffer");
+}
+
+void GLContext::finish()
+{
+    glFinish();
+    REPORTGLERROR("glFinish()");
 }

@@ -173,7 +173,7 @@ int Shader::attributeLocation(const char *name)
 }
 
 
-bool Shader::setUniform(const std::string &uniformName, const glm::mat4 &matrix)
+bool Shader::setUniform(const std::string &uniformName, const iso::mat4 &matrix)
 {
     int uniform = uniformLocation(uniformName);
     REPORTGLERROR("Check uniform location");
@@ -186,7 +186,8 @@ bool Shader::setUniform(const std::string &uniformName, const glm::mat4 &matrix)
     
     if (type == GL_FLOAT_MAT4)
     {
-        glUniformMatrix4fv(uniform, 1, GL_FALSE, glm::value_ptr(matrix));
+//        glUniformMatrix4fv(uniform, 1, GL_FALSE, glm::value_ptr(matrix));
+        glUniformMatrix4fv(uniform, 1, GL_FALSE, (GLfloat*)matrix.data());
         REPORTGLERROR("Give uniform data");
         return true;
     }

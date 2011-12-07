@@ -12,10 +12,10 @@
 
 #include <OpenGL/gl3.h>
 
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "iso.h"
+//#include <glm/glm.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/gtc/type_ptr.hpp>
 
 
 
@@ -41,7 +41,8 @@ public:
     int uniformLocation(const string &name);
     int attributeLocation(const char *name);
     
-    bool setUniform(const std::string &uniformName, const glm::mat4 &matrix);
+//    bool setUniform(const std::string &uniformName, const glm::mat4 &matrix);
+    bool setUniform(const std::string &uniformName, const iso::mat4 &matrix);
 };
 
 #endif
