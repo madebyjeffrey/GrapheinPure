@@ -1,5 +1,5 @@
 //
-//  RenderBuffer.cpp
+//  ImageRenderer.cpp
 //  GrapheinPure
 //
 //  Created by Jeffrey Drake on 11-12-02.
@@ -18,12 +18,12 @@
 
 #include <OpenGL/gl3.h>
 
-#include "RenderBuffer.h"
+#include "ImageRenderer.h"
 #include "Context.h"
 
 
 
-RenderBuffer::RenderBuffer(int width, int height, bool depth) 
+ImageRenderer::ImageRenderer(int width, int height, bool depth) 
     : _width(width), _height(height)
 {
     if (depth)
@@ -62,7 +62,7 @@ RenderBuffer::RenderBuffer(int width, int height, bool depth)
     }
 }
 
-void RenderBuffer::use()
+void ImageRenderer::use()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
     REPORTGLERROR("binding framebuffer");
@@ -72,26 +72,21 @@ void RenderBuffer::use()
 
 }
 
-void RenderBuffer::unuse()
+void ImageRenderer::unuse()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void RenderBuffer::image()
+int ImageRenderer::save(const char *file)
 {
     using namespace boost::gil;
     
     const int samplesPerPixel = 4; // R, G, B and A
     const int rowBytes = samplesPerPixel * _width;
     char* bufferData = (char*)malloc(rowBytes * _height);
-//    NULL_ERROR_EXIT(bufferData, "Unable to allocate buffer for image extraction.");
-
 
     REPORTGLERROR("reading pixels from framebuffer");
     
-    
-
-//    image<rgba8_pixel_t, false> buffer(_width, _height);
     glPixelStorei(GL_PACK_SWAP_BYTES, GL_FALSE);
     glPixelStorei(GL_PACK_LSB_FIRST, GL_FALSE);
     glPixelStorei(GL_PACK_ROW_LENGTH, 0);
@@ -103,7 +98,7 @@ void RenderBuffer::image()
    
     rgba8_view_t img = interleaved_view(_width, _height, (rgba8_pixel_t*) bufferData, rowBytes);
     
-//    copy_pixels(flipped_up_down_view(img), 
-    png_write_view("/Users/drakej/Desktop/test_image.jpg", flipped_up_down_view(img)); //img);
-
+    png_write_view(file, flipped_up_down_view(img)); 
+    
+    return 0;
 }

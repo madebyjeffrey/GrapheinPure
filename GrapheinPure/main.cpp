@@ -17,9 +17,22 @@
 #include "Context.h"
 #include "Shader.h"
 #include "VertexBuffer.h"
-#include "RenderBuffer.h"
+#include "ImageRenderer.h"
 
 #include "iso.h"
+/*
+std::ostream &operator<<(std::ostream &o, const iso::mat4 &m)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+            o << "\t" << (m[i][j]);
+        o << std::endl;
+    }
+    
+    return o;
+}*/
+
 
 int main (int argc, char * const argv[])
 {
@@ -36,11 +49,11 @@ int main (int argc, char * const argv[])
     
     std::string path = argv[1]; std::cout << "Shader path: " << path << std::endl;
     
-    RenderBuffer render(512, 512, true); // use a buffer with depth
-    render.use();
+    ImageRenderer image(512, 512, true); // use a buffer with depth
+    image.use();
 
     context.addShader("basic", "basic.vsh", "basic.fsh");
-    context.ortho(-render.width()/2.0f, render.width() / 2.0f, -render.height() / 2.0f, render.height() / 2.0f, -1.0f, 1.0f);
+    context.ortho(-image.width()/2.0f, image.width() / 2.0f, -image.height() / 2.0f, image.height() / 2.0f, -1.0f, 1.0f);
     context.useShader("basic");
 
     using namespace iso;
@@ -71,7 +84,7 @@ int main (int argc, char * const argv[])
     
     context.depthTest(true);
     context.clearColour((iso::vec4){0.0, 0.0, 0.0, 1.0});
-    context.viewport(0, 0, render.width(), render.height());
+    context.viewport(0, 0, image.width(), image.height());
     context.clearColourBuffer();
     context.clearDepthBuffer();
     
@@ -81,7 +94,7 @@ int main (int argc, char * const argv[])
     
     context.finish();
 
-    render.image();
+    image.save("/Users/drakej/Desktop/test_image.jpg");
     
     context.clearDrawable();
     

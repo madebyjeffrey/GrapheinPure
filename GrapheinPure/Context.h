@@ -21,6 +21,21 @@
 #include "Shader.h"
 #include "VertexBuffer.h"
 
+enum class GLError : std::int32_t 
+{
+    NoError,
+    UndefinedError,
+    PixelFormatError,
+    ContextCreationError,
+    ContextDestructionError,
+    ContextSetError,
+    ClearDrawableError,
+    GetStringError,
+    ClearColourError,
+    DepthTestError,
+    ViewportError,
+    FinishError
+};
 
 class GLContext
 {
@@ -29,7 +44,12 @@ class GLContext
     iso::mat4 projection;
     iso::mat4 modelview;
 
+    GLError errorNumber;
+    std::string errorString;
     
+    void fatalCGError(GLError error, CGLError err);
+    void testCGError(GLError error, CGLError err);
+    void testGLError(GLError error, const char *estr);
 public:
     GLContext();
     ~GLContext();
@@ -54,6 +74,8 @@ public:
     void viewport(int left, int top, int width, int height);
     
     void finish();
+    
+    void setError(GLError error, const char *text);
     
     /* Vertex Buffer */
     

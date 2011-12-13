@@ -106,41 +106,9 @@ VertexBuffer<Layout> &commit(VertexBuffer<Layout> &buf)
     glBindBuffer(GL_ARRAY_BUFFER, buf.array_buffer);
     REPORTGLERROR("bound array buffer");
     
-    for (auto i : buf.data)
-    {
-        for (auto j : i)
-        {
-            std::cout << j << "   ";
-        }
-        std::cout << std::endl;
-    } 
-    
-    float *list = (float*)buf.data.data();
-    
-    std::cout << buf.data.size() << std::endl;
-    
-    for (int i = 0; i < 6 * 4; i++)
-        std::cout << i << ": " << list[i] << std::endl;
-    
-    
     glBufferData(GL_ARRAY_BUFFER, sizeof(iso::vec4)*buf.data.size(), (GLvoid*)buf.data.data(), GL_STATIC_DRAW);
     REPORTGLERROR("Buffer array data");
-    
-    std::cout << "Position Skip: " << buf.layout.position_skip(buf.data.size())*sizeof(iso::vec4) << std::endl;
-    std::cout << "Position Index: " << (buf.layout.position_index(buf.data.size()) * sizeof(iso::vec4)) << std::endl;
-    
-    std::cout << "Colour Skip: " << buf.layout.colour_skip(buf.data.size())*sizeof(iso::vec4) << std::endl;
-    std::cout << "Colour Index: " << (buf.layout.colour_index(buf.data.size()) * sizeof(iso::vec4)) << std::endl;
 
-    std::cout << "===" << std::endl;
-    
-    std::cout << "Position Skip: " << buf.layout.position_skip(buf.data.size()) << std::endl;
-    std::cout << "Position Index: " << buf.layout.position_index(buf.data.size()) << std::endl;
-    
-    std::cout << "Colour Skip: " << buf.layout.colour_skip(buf.data.size()) << std::endl;
-    std::cout << "Colour Index: " << buf.layout.colour_index(buf.data.size()) << std::endl;
-
-    
     glBindVertexArray(buf.vertex_buffer);
 
     if (buf.layout.position())

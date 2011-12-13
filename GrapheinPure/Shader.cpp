@@ -61,7 +61,7 @@ bool Shader::compile(const string &file, GLenum shaderType)
             case GL_FRAGMENT_SHADER: strShaderType = "Fragment"; break;
         }
         
-        cerr << strShaderType << " shader " << file << "failed to compiled." << endl;
+        cerr << strShaderType << " shader " << file << " failed to compile." << endl;
         cerr << "Log:" << endl << strInfoLog << endl;
         
         delete[] strInfoLog;

@@ -8,10 +8,45 @@
 
 #include <cstddef>
 #include <iostream>
+#include <stdexcept>
 
 #include <OpenGL/gl3.h>
 
 #include "Context.h"
+
+
+void GLContext::fatalCGError(GLError error, CGLError err) 
+{
+    if (err == kCGLNoError) return;
+    
+    std::string errstr = CGLErrorString(err);
+    errorNumber = error;
+    errorString = errstr;
+    
+    throw std::runtime_error(errorString);
+}
+
+void GLContext::testCGError(GLError error, CGLError err) 
+{
+    if (err == kCGLNoError) return;
+    
+    std::string errstr = CGLErrorString(err);
+    errorNumber = error;
+    errorString = errstr;
+}
+
+void GLContext::testGLError(GLError error, const char *estr) 
+{
+    std::string errstr = estr;
+    
+    GLenum tGLErr = glGetError(); 
+    if (tGLErr != GL_NO_ERROR) 
+    { 
+        errorNumber = error;
+        errorString = errstr;
+    }
+}
+
 
 GLContext::GLContext() : context(NULL)
 {
@@ -30,28 +65,28 @@ GLContext::GLContext() : context(NULL)
     GLint p = 0;
     
     err = CGLChoosePixelFormat(format, &pix, &p);
-    CATCH_GL_ERROR(err);
-
+    fatalCGError(GLError::PixelFormatError, err);
+    
     err = CGLCreateContext(pix, NULL, &context);
-    CATCH_GL_ERROR(err);
+    fatalCGError(GLError::ContextCreationError, err);
 }
 
 GLContext::~GLContext()
 {
     CGLError err = CGLDestroyContext(context);
-    CATCH_GL_ERROR(err);
+    fatalCGError(GLError::ContextDestructionError, err);
 }
 
 void GLContext::makeCurrent()
 {
     CGLError err = CGLSetCurrentContext(context);
-    CATCH_GL_ERROR(err);
+    testCGError(GLError::ContextSetError, err);
 }
 
 void GLContext::clearDrawable()
 {
     CGLError err = CGLClearDrawable(context);
-    CATCH_GL_ERROR(err);
+    testCGError(GLError::ClearDrawableError, err);
 }
 
 void GLContext::renderInfo()
@@ -61,20 +96,21 @@ void GLContext::renderInfo()
 	if (glGetString(GL_VENDOR) == NULL) 
 	{
 		std::cout << "No Vendor String" << std::endl;
+        
 		return;
 	}
 	
 	std::cout << "Vendor:" << glGetString(GL_VENDOR) << std::endl;
-    REPORTGLERROR("Get vendor string");
+    testGLError(GLError::GetStringError, "Get vendor string");
 
 	std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
-    REPORTGLERROR("Get Renderer string");
+    testGLError(GLError::GetStringError, "Get Renderer string");
     
 	std::cout << "Version: " << glGetString(GL_VERSION) << std::endl;
-    REPORTGLERROR("Get Version String");
+    testGLError(GLError::GetStringError, "Get Version String");
     
 	std::cout << "Shading Language Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl << std::endl;
-    REPORTGLERROR("Get shading language version");
+    testGLError(GLError::GetStringError, "Get shading language version");
 }
 
 void GLContext::addShader(std::string name, std::string vertexFile, std::string fragmentFile)
@@ -108,19 +144,19 @@ void GLContext::ortho(float left, float right, float bottom, float top, float zN
 void GLContext::clearColour(const iso::vec4 &c)
 {
     glClearColor(c[0], c[1], c[2], c[3]);
-    REPORTGLERROR("specifying clear color");
+    testGLError(GLError::ClearColourError, "specifying clear color");
 }
 
 bool GLContext::depthTest(bool enable)
 {
     GLboolean v = glIsEnabled(GL_DEPTH_TEST);
-    REPORTGLERROR("is depth testing enabled");
+    testGLError(GLError::DepthTestError, "is depth testing enabled");
     if (enable)
         glEnable(GL_DEPTH_TEST);
     else
         glDisable(GL_DEPTH_TEST);
     
-    REPORTGLERROR("enabling/disabling depth testing");
+    testGLError(GLError::DepthTestError, "enabling/disabling depth testing");
     
     return v == GL_TRUE;
 }
@@ -128,30 +164,30 @@ bool GLContext::depthTest(bool enable)
 bool GLContext::depthTest()
 {
     GLboolean v = glIsEnabled(GL_DEPTH_TEST);
-    REPORTGLERROR("is depth testing enabled");
+    testGLError(GLError::DepthTestError, "is depth testing enabled");
     return v == GL_TRUE;    
 }
 
 void GLContext::viewport(int left, int top, int width, int height)
 {
     glViewport(left, top, width, height);
-    REPORTGLERROR("specifying viewport");
+    testGLError(GLError::ViewportError, "specifying viewport");
 }
 
 void GLContext::clearColourBuffer()
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    REPORTGLERROR("clearing color buffer");
+    testGLError(GLError::ClearColourError, "clearing color buffer");
 }
 
 void GLContext::clearDepthBuffer()
 {
     glClear(GL_DEPTH_BUFFER_BIT);
-    REPORTGLERROR("clearing depth buffer");
+    testGLError(GLError::DepthTestError, "clearing depth buffer");
 }
 
 void GLContext::finish()
 {
     glFinish();
-    REPORTGLERROR("glFinish()");
+    testGLError(GLError::FinishError, "glFinish()");
 }

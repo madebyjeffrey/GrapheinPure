@@ -11,23 +11,27 @@
 
 #include <OpenGL/gl3.h>
 
-class RenderBuffer
+class ImageRenderer
 {
     GLuint  renderBuffer = 0;
     GLuint  depthBuffer = 0;
     GLuint  frameBuffer = 0;
     int _width = 128, _height = 128;
-    
+
+
 public:
-    RenderBuffer() = default;
-    RenderBuffer(int width, int height, bool depth = false);
+    ImageRenderer() = default;
+    ImageRenderer(int width, int height, bool depth = false);
     
-    void use();
-    void unuse();
-    void image();
+    int save(const char *file);
     
     int width() { return _width; }
     int height() { return _height; }
+    
+    // these should be transparent
+    void use();
+    void unuse();
+
 };
 
 #endif

@@ -57,6 +57,8 @@ mat4 operator ,(const mat4x3 &x, const vec4 &y)
     mat4 m = {x[0], x[1], x[2], y};
     return m;
 }
+    
+
 
 mat4 ortho2d(float left, float right, 
              float bottom, float top,
